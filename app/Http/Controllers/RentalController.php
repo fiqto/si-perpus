@@ -14,7 +14,7 @@ class RentalController extends Controller
     public function index()
     {
         //
-        $rentals = Rental::all();
+        $rentals = Rental::latest()->paginate(10);
         return view('pages.rentals.index', compact('rentals'));
     }
 
@@ -32,6 +32,9 @@ class RentalController extends Controller
     public function store(StoreRentalRequest $request)
     {
         //
+        Rental::create($request->validated());
+        return redirect()->route('rentals.index')
+            ->with('success', 'Data created successfully.');
     }
 
     /**
@@ -56,6 +59,9 @@ class RentalController extends Controller
     public function update(UpdateRentalRequest $request, Rental $rental)
     {
         //
+        $rental->update($request->validated());
+        return redirect()->route('rentals.index')
+            ->with('success', 'Data updated successfully');
     }
 
     /**
@@ -64,5 +70,8 @@ class RentalController extends Controller
     public function destroy(Rental $rental)
     {
         //
+        $rental->delete();
+        return redirect()->route('rentals.index')
+            ->with('success', 'Data deleted successfully');
     }
 }

@@ -12,7 +12,6 @@ class Book extends Model
     protected $fillable = [
         'title',
         'amount',
-        'status',
     ];
     public function rentals(): HasMany
     {

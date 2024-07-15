@@ -25,11 +25,11 @@ class UpdateStudentRequest extends FormRequest
     {
         return [
             //
-            'name' => ['required', 'string'],
-            'identification_number' => ['required', 'string', Rule::unique(Student::class)->ignore($this->student()->id)],
-            'phone_number' => ['required', 'integer'],
-            'study_program' => ['required', 'string'],
-            'student_class' => ['required', 'string'],
+            'name' => ['required'],
+            'identification_number' => ['required'],
+            'phone_number' => ['required'],
+            'study_program' => ['required'],
+            'student_class' => ['required'],
         ];
     }
 }

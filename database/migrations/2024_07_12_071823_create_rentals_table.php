@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('book_id');
             $table->date('rental_length');
-            $table->integer('penalty');
+            $table->date('penalty')->nullable();
             $table->boolean('status')->default(false);
             $table->foreign('student_id')->references('id')->on('students');
             $table->foreign('book_id')->references('id')->on('books');

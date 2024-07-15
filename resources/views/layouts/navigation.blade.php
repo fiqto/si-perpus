@@ -15,14 +15,14 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.index')">
-                        {{ __('Student') }}
+                    <x-nav-link :href="route('rentals.index')" :active="request()->routeIs('rentals.index')">
+                        {{ __('Peminjaman') }}
                     </x-nav-link>
                     <x-nav-link :href="route('books.index')" :active="request()->routeIs('books.index')">
-                        {{ __('Book') }}
+                        {{ __('Buku') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('rentals.index')" :active="request()->routeIs('rentals.index')">
-                        {{ __('Rental') }}
+                    <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.index')">
+                        {{ __('Mahasiswa') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -79,14 +79,14 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('students.index')" :active="request()->routeIs('students.index')">
-                {{ __('Student') }}
+            <x-responsive-nav-link :href="route('rentals.index')" :active="request()->routeIs('rentals.index')">
+                {{ __('Peminjaman') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('books.index')" :active="request()->routeIs('books.index')">
-                {{ __('Book') }}
+                {{ __('Buku') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('rentals.index')" :active="request()->routeIs('rentals.index')">
-                {{ __('Rental') }}
+            <x-responsive-nav-link :href="route('students.index')" :active="request()->routeIs('students.index')">
+                {{ __('Mahasiswa') }}
             </x-responsive-nav-link>
         </div>
 

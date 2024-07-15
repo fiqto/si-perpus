@@ -23,11 +23,11 @@ class StoreStudentRequest extends FormRequest
     {
         return [
             //
-            'name' => ['required', 'string'],
-            'identification_number' => ['required', 'string', 'unique:students,identification_number'],
-            'phone_number' => ['required', 'integer'],
-            'study_program' => ['required', 'string'],
-            'student_class' => ['required', 'string'],
+            'name' => ['required'],
+            'identification_number' => ['required', 'unique:students'],
+            'phone_number' => ['required'],
+            'study_program' => ['required'],
+            'student_class' => ['required'],
         ];
     }
 }

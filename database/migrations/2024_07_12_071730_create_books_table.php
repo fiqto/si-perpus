@@ -16,7 +16,6 @@ return new class extends Migration
             $table->timestamps();
             $table->string('title')->unique();
             $table->integer('amount');
-            $table->boolean('status')->default(true);
         });
     }
 

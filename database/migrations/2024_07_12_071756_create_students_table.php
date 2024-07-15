@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('name');
-            $table->integer('identification_number')->unique();
-            $table->integer('phone_number');
+            $table->bigInteger('identification_number')->unique();
+            $table->bigInteger('phone_number');
             $table->string('study_program');
             $table->integer('student_class');
         });

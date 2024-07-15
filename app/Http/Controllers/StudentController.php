@@ -14,7 +14,7 @@ class StudentController extends Controller
     public function index()
     {
         //
-        $students = Student::all();
+        $students = Student::latest()->paginate(10);
         return view('pages.students.index', compact('students'));
     }
 
@@ -71,7 +71,7 @@ class StudentController extends Controller
     {
         //
         $student->delete();
-        return redirect()->route('notes.index')
-            ->with('success', 'Note deleted successfully');
+        return redirect()->route('students.index')
+            ->with('success', 'Data deleted successfully');
     }
 }

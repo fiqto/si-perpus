@@ -11,7 +11,7 @@ class StoreRentalRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,6 +23,9 @@ class StoreRentalRequest extends FormRequest
     {
         return [
             //
+            'student_id' => ['required'],
+            'book_id' => ['required'],
+            'rental_length' => ['required'],
         ];
     }
 }
