@@ -15,6 +15,8 @@ class Rental extends Model
         'rental_length',
         'penalty',
         'status',
+        'created_at',
+        'updated_at',
     ];
     public function student(): BelongsTo
     {

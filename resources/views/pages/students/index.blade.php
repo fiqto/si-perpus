@@ -39,8 +39,8 @@
                                 <td>{{ $student->study_program }}</td>
                                 <td>{{ $student->student_class }}</td>
                                 <td>
-                                    <button class="btn" onclick="my_modal_2.showModal({{ $student->id }})">Ubah</button>
-                                    <button class="btn" onclick="my_modal_3.showModal({{ $student->id }})">Hapus</button>
+                                    <label for="my_modal_2{{$student->id}}" class="btn">Ubah</label>
+                                    <label for="my_modal_3{{$student->id}}" class="btn">Hapus</label>
                                 </td>
                             </tr>
                             @empty
@@ -104,66 +104,70 @@
         </div>
     </dialog>
     @if(!empty($student))
-    <dialog id="my_modal_2" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box">
-            <h3 class="text-lg font-bold">Ubah</h3>
-            <div class="modal-action">
-                <form action="{{ route('students.update', $student->id) }}" method="POST" class="w-full">
-                    @csrf
-                    @method('PUT')
-                    <!-- if there is a button in form, it will close the modal -->
-                    <label class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text">NIM</span>
-                        </div>
-                        <input type="text" id="identification_number" name="identification_number" value="{{ old('identification_number', $student->identification_number) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
-                    </label>
-                    <label class="form-control w-full pt-3">
-                        <div class="label">
-                            <span class="label-text">Nama</span>
-                        </div>
-                        <input type="text" id="name" name="name" value="{{ old('name', $student->name) }}" placeholder="Ketik disini" class="input input-bordered w-full " required />
-                    </label>
-                    <label class="form-control w-full pt-3">
-                        <div class="label">
-                            <span class="label-text">No. Telepon</span>
-                        </div>
-                        <input type="text" id="phone_number" name="phone_number" value="{{ old('phone_number', $student->phone_number) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
-                    </label>
-                    <label class="form-control w-full pt-3">
-                        <div class="label">
-                            <span class="label-text">Program Studi</span>
-                        </div>
-                        <input type="text" id="study_program" name="study_program" value="{{ old('study_program', $student->study_program) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
-                    </label>
-                    <label class="form-control w-full pt-3">
-                        <div class="label">
-                            <span class="label-text">Angkatan</span>
-                        </div>
-                        <input type="text" id="student_class" name="student_class" value="{{ old('student_class', $student->student_class) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
-                    </label>
-                    <div class="flex justify-end pt-3">
-                        <button type="submit" class="btn mx-3">Simpan</button>
-                        <button type="button" class="btn" onclick="my_modal_2.close()">Tutup</button>
+        @foreach($students as $student)
+            <input type="checkbox" id="my_modal_2{{$student->id}}" class="modal-toggle" />
+            <div class="modal" role="dialog">
+                <div class="modal-box">
+                    <h3 class="text-lg font-bold">Ubah</h3>
+                    <div class="modal-action">
+                        <form action="{{ route('students.update', $student->id) }}" method="POST" class="w-full">
+                            @csrf
+                            @method('PUT')
+                            <!-- if there is a button in form, it will close the modal -->
+                            <label class="form-control w-full">
+                                <div class="label">
+                                    <span class="label-text">NIM</span>
+                                </div>
+                                <input type="text" id="identification_number" name="identification_number" value="{{ old('identification_number', $student->identification_number) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
+                            </label>
+                            <label class="form-control w-full pt-3">
+                                <div class="label">
+                                    <span class="label-text">Nama</span>
+                                </div>
+                                <input type="text" id="name" name="name" value="{{ old('name', $student->name) }}" placeholder="Ketik disini" class="input input-bordered w-full " required />
+                            </label>
+                            <label class="form-control w-full pt-3">
+                                <div class="label">
+                                    <span class="label-text">No. Telepon</span>
+                                </div>
+                                <input type="text" id="phone_number" name="phone_number" value="{{ old('phone_number', $student->phone_number) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
+                            </label>
+                            <label class="form-control w-full pt-3">
+                                <div class="label">
+                                    <span class="label-text">Program Studi</span>
+                                </div>
+                                <input type="text" id="study_program" name="study_program" value="{{ old('study_program', $student->study_program) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
+                            </label>
+                            <label class="form-control w-full pt-3">
+                                <div class="label">
+                                    <span class="label-text">Angkatan</span>
+                                </div>
+                                <input type="text" id="student_class" name="student_class" value="{{ old('student_class', $student->student_class) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
+                            </label>
+                            <div class="flex justify-end pt-3">
+                                <button type="submit" class="btn mx-3">Simpan</button>
+                                <label for="my_modal_2{{$student->id}}" class="btn">Tutup</label>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
-    </dialog>
-    <dialog id="my_modal_3" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box">
-            <h3 class="text-lg font-bold">Hapus</h3>
-            <p class="py-4">Apakah anda yakin menghapus data tersebut?</p>
-            <div class="modal-action">
-                <form action="{{ route('students.destroy', $student->id) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <!-- if there is a button in form, it will close the modal -->
-                    <button type="submit" class="btn">Hapus</button>
-                    <button type="button" class="btn" onclick="my_modal_3.close()">Tutup</button>
-                </form>
+            <input type="checkbox" id="my_modal_3{{$student->id}}" class="modal-toggle" />
+            <div class="modal" role="dialog">
+                <div class="modal-box">
+                    <h3 class="text-lg font-bold">Hapus</h3>
+                    <p class="py-4">Apakah anda yakin menghapus data tersebut?</p>
+                    <div class="modal-action">
+                        <form action="{{ route('students.destroy', $student->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <!-- if there is a button in form, it will close the modal -->
+                            <button type="submit" class="btn">Hapus</button>
+                            <label for="my_modal_3{{$student->id}}" class="btn">Tutup</label>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </div>
-    </dialog>
+        @endforeach
     @endif
 </x-app-layout>

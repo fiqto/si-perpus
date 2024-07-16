@@ -22,9 +22,11 @@
                                 <th></th>
                                 <th>Buku</th>
                                 <th>Mahasiswa</th>
-                                <th>Tanggal Peminjaman</th>
-                                <th>Tanggal Batas Pengembalian</th>
-                                <th>Tanggal Pengembalian</th>
+                                <th>Peminjaman</th>
+                                <th>Batas Pengembalian</th>
+                                <th>Pengembalian</th>
+                                <th>Denda</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                             </thead>
@@ -33,11 +35,18 @@
                             @forelse($rentals as $rental)
                                 <tr>
                                     <th>{{ $loop->index + 1 }}</th>
-                                    <td>{{ $rental->title }}</td>
-                                    <td>{{ $rental->name }}</td>
+                                    <td>{{ $rental->book->title }}</td>
+                                    <td>{{ $rental->student->name }}</td>
+                                    <td>{{ $rental->created_at->format('Y-m-d') }}</td>
+                                    <td>{{ $rental->rental_length }}</td>
+                                    <td>@if($rental->created_at == $rental->updated_at) - @else{{ $rental->updated_at->format('Y-m-d') }}@endif</td>
+                                    <td>Rp.@if($rental->penalty == null)0 @else{{ $rental->penalty }} @endif</td>
+                                    <td>@if($rental->status == 0) Belum dikembalikan @else Sudah dikembalikan @endif</td>
                                     <td>
-                                        <button class="btn" onclick="my_modal_2.showModal({{ $rental->id }})">Ubah</button>
-                                        <button class="btn" onclick="my_modal_3.showModal({{ $rental->id }})">Hapus</button>
+                                        @if($rental->status == 0)
+                                            <label for="my_modal_2{{$rental->id}}" class="btn">Ubah</label>
+                                            <label for="my_modal_3{{$rental->id}}" class="btn">Hapus</label>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty
@@ -68,7 +77,10 @@
                         </div>
                         <select id="book_id" name="book_id" class="select select-bordered w-full" required>
                             <option disabled selected>Pick one</option>
-                            <option>Star Wars</option>
+                            @forelse($books as $book)
+                                @if($book->current_amount > 0) <option value="{{ $book->id }}" >{{ $book->title }}</option> @endif
+                            @empty
+                            @endforelse
                         </select>
                     </label>
                     <label class="form-control w-full">
@@ -77,7 +89,10 @@
                         </div>
                         <select id="student_id" name="student_id" class="select select-bordered w-full" required>
                             <option disabled selected>Pick one</option>
-                            <option>Star Wars</option>
+                            @forelse($students as $student)
+                                <option value="{{ $student->id }}" >{{ $student->name }} - {{ $student->identification_number }}</option>
+                            @empty
+                            @endforelse
                         </select>
                     </label>
                     <label class="form-control w-full">
@@ -95,48 +110,49 @@
         </div>
     </dialog>
     @if(!empty($rental))
-        <dialog id="my_modal_2" class="modal modal-bottom sm:modal-middle">
-            <div class="modal-box">
-                <h3 class="text-lg font-bold">Ubah</h3>
-                <div class="modal-action">
-                    <form action="{{ route('rentals.update', $rental->id) }}" method="POST" class="w-full">
-                        @csrf
-                        @method('PUT')
-                        <!-- if there is a button in form, it will close the modal -->
-                        <label class="form-control w-full">
-                            <div class="label">
-                                <span class="label-text">Buku</span>
+        @foreach($rentals as $rental)
+            <input type="checkbox" id="my_modal_2{{$rental->id}}" class="modal-toggle" />
+            <div class="modal" role="dialog">
+                <div class="modal-box">
+                    <h3 class="text-lg font-bold">Ubah</h3>
+                    <div class="modal-action">
+                        <form action="{{ route('rentals.update', $rental->id) }}" method="POST" class="w-full">
+                            @csrf
+                            @method('PUT')
+                            <!-- if there is a button in form, it will close the modal -->
+                            <label class="form-control w-full">
+                                <div class="label">
+                                    <span class="label-text">Status</span>
+                                </div>
+                                <select id="status" name="status" class="select select-bordered w-full" required>
+                                    <option value="0" disabled selected>Belum dikembalikan</option>
+                                    <option value="1">Sudah dikembalikan</option>
+                                </select>
+                            </label>
+                            <div class="flex justify-end pt-3">
+                                <button type="submit" class="btn mx-3">Simpan</button>
+                                <label for="my_modal_2{{$rental->id}}" class="btn">Tutup</label>
                             </div>
-                            <input type="text" id="title" name="title" value="{{ old('title', $rental->title) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
-                        </label>
-                        <label class="form-control w-full">
-                            <div class="label">
-                                <span class="label-text">Mahasiswa</span>
-                            </div>
-                            <input type="text" id="name" name="name" value="{{ old('name', $rental->name) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
-                        </label>
-                        <div class="flex justify-end pt-3">
-                            <button type="submit" class="btn mx-3">Simpan</button>
-                            <button type="button" class="btn" onclick="my_modal_2.close()">Tutup</button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </dialog>
-        <dialog id="my_modal_3" class="modal modal-bottom sm:modal-middle">
-            <div class="modal-box">
-                <h3 class="text-lg font-bold">Hapus</h3>
-                <p class="py-4">Apakah anda yakin menghapus data tersebut?</p>
-                <div class="modal-action">
-                    <form action="{{ route('rentals.destroy', $rental->id) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <!-- if there is a button in form, it will close the modal -->
-                        <button type="submit" class="btn">Hapus</button>
-                        <button type="button" class="btn" onclick="my_modal_3.close()">Tutup</button>
-                    </form>
+            <input type="checkbox" id="my_modal_3{{$rental->id}}" class="modal-toggle" />
+            <div class="modal" role="dialog">
+                <div class="modal-box">
+                    <h3 class="text-lg font-bold">Hapus</h3>
+                    <p class="py-4">Apakah anda yakin menghapus data tersebut?</p>
+                    <div class="modal-action">
+                        <form action="{{ route('rentals.destroy', $rental->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <!-- if there is a button in form, it will close the modal -->
+                            <button type="submit" class="btn">Hapus</button>
+                            <label for="my_modal_3{{$rental->id}}" class="btn">Tutup</label>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </dialog>
+        @endforeach
     @endif
 </x-app-layout>

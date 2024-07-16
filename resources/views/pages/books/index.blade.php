@@ -34,11 +34,11 @@
                                     <th>{{ $loop->index + 1 }}</th>
                                     <td>{{ $book->title }}</td>
                                     <td>{{ $book->amount }}</td>
-                                    <td>{{ $book->amount }}</td>
+                                    <td>{{ $book->current_amount }}</td>
                                     <td>@if($book->amount > 0) Tersedia @else Tidak tersedia @endif</td>
                                     <td>
-                                        <button class="btn" onclick="my_modal_2.showModal({{ $book->id }})">Ubah</button>
-                                        <button class="btn" onclick="my_modal_3.showModal({{ $book->id }})">Hapus</button>
+                                        <label for="my_modal_2{{$book->id}}" class="btn">Ubah</label>
+                                        <label for="my_modal_3{{$book->id}}" class="btn">Hapus</label>
                                     </td>
                                 </tr>
                             @empty
@@ -84,48 +84,52 @@
         </div>
     </dialog>
     @if(!empty($book))
-    <dialog id="my_modal_2" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box">
-            <h3 class="text-lg font-bold">Ubah</h3>
-            <div class="modal-action">
-                <form action="{{ route('books.update', $book->id) }}" method="POST" class="w-full">
-                    @csrf
-                    @method('PUT')
-                    <!-- if there is a button in form, it will close the modal -->
-                    <label class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text">Judul</span>
-                        </div>
-                        <input type="text" id="title" name="title" value="{{ old('title', $book->title) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
-                    </label>
-                    <label class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text">Jumlah Buku</span>
-                        </div>
-                        <input type="text" id="amount" name="amount" value="{{ old('amount', $book->amount) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
-                    </label>
-                    <div class="flex justify-end pt-3">
-                        <button type="submit" class="btn mx-3">Simpan</button>
-                        <button type="button" class="btn" onclick="my_modal_2.close()">Tutup</button>
+        @foreach($books as $book)
+            <input type="checkbox" id="my_modal_2{{$book->id}}" class="modal-toggle" />
+            <div class="modal" role="dialog">
+                <div class="modal-box">
+                    <h3 class="text-lg font-bold">Ubah</h3>
+                    <div class="modal-action">
+                        <form action="{{ route('books.update', $book->id) }}" method="POST" class="w-full">
+                            @csrf
+                            @method('PUT')
+                            <!-- if there is a button in form, it will close the modal -->
+                            <label class="form-control w-full">
+                                <div class="label">
+                                    <span class="label-text">Judul</span>
+                                </div>
+                                <input type="text" id="title" name="title" value="{{ old('title', $book->title) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
+                            </label>
+                            <label class="form-control w-full">
+                                <div class="label">
+                                    <span class="label-text">Jumlah Buku</span>
+                                </div>
+                                <input type="text" id="amount" name="amount" value="{{ old('amount', $book->amount) }}" placeholder="Ketik disini" class="input input-bordered w-full" required />
+                            </label>
+                            <div class="flex justify-end pt-3">
+                                <button type="submit" class="btn mx-3">Simpan</button>
+                                <label for="my_modal_2{{$book->id}}" class="btn">Tutup</label>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
-    </dialog>
-    <dialog id="my_modal_3" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box">
-            <h3 class="text-lg font-bold">Hapus</h3>
-            <p class="py-4">Apakah anda yakin menghapus data tersebut?</p>
-            <div class="modal-action">
-                <form action="{{ route('books.destroy', $book->id) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <!-- if there is a button in form, it will close the modal -->
-                    <button type="submit" class="btn">Hapus</button>
-                    <button type="button" class="btn" onclick="my_modal_3.close()">Tutup</button>
-                </form>
+            <input type="checkbox" id="my_modal_3{{$book->id}}" class="modal-toggle" />
+            <div class="modal" role="dialog">
+                <div class="modal-box">
+                    <h3 class="text-lg font-bold">Hapus</h3>
+                    <p class="py-4">Apakah anda yakin menghapus data tersebut?</p>
+                    <div class="modal-action">
+                        <form action="{{ route('books.destroy', $book->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <!-- if there is a button in form, it will close the modal -->
+                            <button type="submit" class="btn">Hapus</button>
+                            <label for="my_modal_3{{$book->id}}" class="btn">Tutup</label>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </div>
-    </dialog>
+        @endforeach
     @endif
 </x-app-layout>

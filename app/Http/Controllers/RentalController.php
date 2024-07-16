@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRentalRequest;
 use App\Http\Requests\UpdateRentalRequest;
+use App\Models\Book;
 use App\Models\Rental;
+use App\Models\Student;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class RentalController extends Controller
 {
@@ -15,7 +19,9 @@ class RentalController extends Controller
     {
         //
         $rentals = Rental::latest()->paginate(10);
-        return view('pages.rentals.index', compact('rentals'));
+        $books = Book::all();
+        $students = Student::all();
+        return view('pages.rentals.index', compact('rentals', 'books', 'students'));
     }
 
     /**
@@ -32,6 +38,10 @@ class RentalController extends Controller
     public function store(StoreRentalRequest $request)
     {
         //
+        $data = $request->validated();
+        $book = DB::table('books')->where('id', $data['book_id'])->first();
+        $current_amount = $book->current_amount - 1;
+        DB::table('books')->where('id', $data['book_id'])->update(['current_amount' => $current_amount]);
         Rental::create($request->validated());
         return redirect()->route('rentals.index')
             ->with('success', 'Data created successfully.');
@@ -59,7 +69,23 @@ class RentalController extends Controller
     public function update(UpdateRentalRequest $request, Rental $rental)
     {
         //
-        $rental->update($request->validated());
+        $data = $request->validated();
+        if ($data['status'] == 1) {
+            $book = DB::table('books')->where('id', $rental->book_id)->first();
+            $current_amount = $book->current_amount + 1;
+            DB::table('books')->where('id', $rental->book_id)->update(['current_amount' => $current_amount]);
+
+            $start_date_string = $rental->rental_length;
+            $start_date = Carbon::parse($start_date_string);
+            $end_date = Carbon::now();
+            $range  = date_diff( $start_date, $end_date );
+
+            if ($start_date < $end_date) {
+                $data['penalty'] = 500 * $range->days;
+            }
+        }
+
+        $rental->update($data);
         return redirect()->route('rentals.index')
             ->with('success', 'Data updated successfully');
     }
@@ -70,6 +96,9 @@ class RentalController extends Controller
     public function destroy(Rental $rental)
     {
         //
+        $book = DB::table('books')->where('id', $rental->book_id)->first();
+        $current_amount = $book->current_amount + 1;
+        DB::table('books')->where('id', $rental->book_id)->update(['current_amount' => $current_amount]);
         $rental->delete();
         return redirect()->route('rentals.index')
             ->with('success', 'Data deleted successfully');

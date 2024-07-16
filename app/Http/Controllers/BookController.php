@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
+use App\Models\Rental;
 
 class BookController extends Controller
 {
@@ -32,9 +33,11 @@ class BookController extends Controller
     public function store(StoreBookRequest $request)
     {
         //
-        Book::create($request->validated());
+        $data = $request->validated();
+        $data['current_amount'] = $data['amount'];
+        Book::create($data);
         return redirect()->route('books.index')
-            ->with('success', 'Data created successfully.');
+            ->with('success', 'Data berhasil disimpan.');
     }
 
     /**
@@ -59,9 +62,17 @@ class BookController extends Controller
     public function update(UpdateBookRequest $request, Book $book)
     {
         //
-        $book->update($request->validated());
+        $data = $request->validated();
+        if( $book->amount <= $data['amount']){
+            $add = $data['amount'] - $book->amount;
+            $data['current_amount'] = $book->current_amount + $add;
+        } else {
+            $add = $book->amount - $data['amount'];
+            $data['current_amount'] = $book->current_amount - $add;
+        }
+        $book->update($data);
         return redirect()->route('books.index')
-            ->with('success', 'Data updated successfully');
+            ->with('success', 'Data berhasil disimpan');
     }
 
     /**
@@ -70,8 +81,15 @@ class BookController extends Controller
     public function destroy(Book $book)
     {
         //
+        $hasRental = Rental::where('book_id', $book->id)->exists();
+
+        if ($hasRental) {
+            return redirect()->route('books.index')
+                ->with('error', 'Data tidak bisa dihapus.');
+        }
+
         $book->delete();
         return redirect()->route('books.index')
-            ->with('success', 'Data deleted successfully');
+            ->with('success', 'Data berhasil dihapus.');
     }
 }

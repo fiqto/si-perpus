@@ -16,6 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('title')->unique();
             $table->integer('amount');
+            $table->integer('current_amount');
         });
     }
 

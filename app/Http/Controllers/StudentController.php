@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
+use App\Models\Rental;
 use App\Models\Student;
 
 class StudentController extends Controller
@@ -34,7 +35,7 @@ class StudentController extends Controller
         //
         Student::create($request->validated());
         return redirect()->route('students.index')
-            ->with('success', 'Data created successfully.');
+            ->with('success', 'Data berhasil disimpan.');
     }
 
     /**
@@ -61,7 +62,7 @@ class StudentController extends Controller
         //
         $student->update($request->validated());
         return redirect()->route('students.index')
-            ->with('success', 'Data updated successfully');
+            ->with('success', 'Data berhasil disimpan');
     }
 
     /**
@@ -70,8 +71,15 @@ class StudentController extends Controller
     public function destroy(Student $student)
     {
         //
+        $hasRental = Rental::where('student_id', $student->id)->exists();
+
+        if ($hasRental) {
+            return redirect()->route('students.index')
+                ->with('error', 'Data tidak bisa dihapus.');
+        }
+
         $student->delete();
         return redirect()->route('students.index')
-            ->with('success', 'Data deleted successfully');
+            ->with('success', 'Data berhasil dihapus');
     }
 }
